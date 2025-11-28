@@ -1,0 +1,316 @@
+:root {
+  --brand-blue-1: #e6f8ff;
+  --brand-blue-2: #bfeeff; 
+  --brand-yellow-1: #fff4cc;
+  --brand-yellow-2: #ffd75a;
+  --color-surface-1: #ffffff; 
+  --color-surface-2: #e6f8ff; 
+  --color-text-primary: #05233a;
+  --color-text-secondary: #08304a;
+  --color-border: rgba(5, 35, 58, 0.06);
+  --shadow-md: 0 6px 18px rgba(5, 35, 58, 0.06);
+  --transition-fast: 200ms ease;
+  --radius-md: 10px;
+  --radius-sm: 6px;
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --font-size-sm: 0.9rem;
+  --font-size-base: 1rem;
+}
+
+body {
+  background-color: var(--brand-blue-1);
+  color: var(--color-text-primary);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.site-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  background: var(--color-surface-1);
+  color: var(--color-text-primary);
+  width: 100%;
+  padding: 1px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  box-shadow: var(--shadow-md);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.site-header .header-row,
+.site-header > .header-row {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.site-header .logo {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-shrink: 0;
+  margin-right: 0;
+}
+
+.site-header .logo img {
+  width: 150px;
+  height: auto;
+  max-height: 150px;
+  object-fit: contain;
+  border-radius: var(--radius-sm);
+  transition: var(--transition-fast);
+  border: none;
+}
+
+.site-header .menu {
+  display: flex;
+  align-items: center;
+  gap: var(--space-lg);
+  margin-left: 1200px;
+  margin-right: var(--space-xl);
+}
+
+.site-header .menu a {
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  font-weight: 600;
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-sm);
+  transition: var(--transition-fast);
+  font-size: 1.1rem;
+  letter-spacing: 0.3px;
+}
+
+.site-header .menu a.inicio {
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: var(--color-text-primary);
+  background: transparent;
+  padding: calc(var(--space-sm) + 2px) var(--space-md);
+}
+
+.site-header .menu a:hover,
+.site-header .menu a:focus-visible {
+  background: var(--color-surface-2);
+  color: var(--color-text-primary);
+  outline: none;
+}
+
+.title-section {
+  text-align: center;
+  padding: var(--space-xl) var(--space-md);
+  margin: var(--space-xl) 0;
+}
+
+.title-section h1 {
+  font-size: 2.8rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-md);
+  letter-spacing: -0.5px;
+}
+
+.title-section p {
+  font-size: 1.2rem;
+  color: #5a7a8f;
+  margin: 0;
+  font-weight: 400;
+  line-height: 1.6;
+}
+
+.search-section {
+  padding: var(--space-lg) var(--space-md);
+  margin-bottom: var(--space-lg);
+}
+
+.search-container {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.search-input {
+  width: 100%;
+  padding: var(--space-md) var(--space-lg);
+  font-size: 1.1rem;
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-1);
+  color: var(--color-text-primary);
+  transition: var(--transition-fast);
+  box-shadow: 0 2px 8px rgba(5, 35, 58, 0.04);
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--brand-blue-2);
+  box-shadow: 0 4px 12px rgba(191, 238, 255, 0.3);
+}
+
+.search-input::placeholder {
+  color: #a0b8c8;
+}
+
+.filter-section {
+  padding: var(--space-lg) var(--space-md);
+  margin-bottom: var(--space-lg);
+}
+
+.filter-container {
+  max-width: 600px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.filter-label {
+  font-weight: 600;
+  color: var(--color-text-primary);
+  font-size: 1rem;
+  white-space: nowrap;
+}
+
+.filter-select {
+  flex: 1;
+  padding: var(--space-sm) var(--space-md);
+  font-size: 1rem;
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-1);
+  color: var(--color-text-primary);
+  transition: var(--transition-fast);
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(5, 35, 58, 0.04);
+}
+
+.filter-select:focus {
+  outline: none;
+  border-color: var(--brand-blue-2);
+  box-shadow: 0 4px 12px rgba(191, 238, 255, 0.3);
+}
+
+.countries-section {
+  padding: var(--space-lg) var(--space-md);
+  margin-bottom: var(--space-xl);
+}
+
+.countries-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.countries-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--space-lg);
+  width: 100%;
+}
+
+
+.country-card {
+  background: var(--color-surface-1);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(5, 35, 58, 0.08);
+  transition: var(--transition-fast);
+  border: 1px solid var(--color-border);
+  cursor: pointer;
+}
+
+.country-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 8px 20px rgba(5, 35, 58, 0.12);
+  border-color: var(--brand-blue-2);
+}
+
+.country-flag {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  background: var(--color-surface-2);
+}
+
+.country-info {
+  padding: var(--space-lg);
+}
+
+.country-name {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-sm);
+}
+
+.country-detail {
+  font-size: 0.95rem;
+  color: #5a7a8f;
+  margin-bottom: var(--space-xs);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.country-detail strong {
+  color: var(--color-text-primary);
+  font-weight: 600;
+}
+
+
+.loading {
+  text-align: center;
+  padding: var(--space-xl);
+  font-size: 1.1rem;
+  color: #5a7a8f;
+}
+
+.empty-state {
+  text-align: center;
+  padding: var(--space-xl);
+  color: #5a7a8f;
+  font-size: 1.1rem;
+}
+
+
+@media (max-width: 768px) {
+  .title-section h1 {
+    font-size: 2rem;
+  }
+
+  .title-section p {
+    font-size: 1rem;
+  }
+
+  .filter-container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .countries-list {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .title-section {
+    padding: var(--space-lg) var(--space-md);
+  }
+
+  .title-section h1 {
+    font-size: 1.6rem;
+  }
+
+  .title-section p {
+    font-size: 0.95rem;
+  }
+
+  .countries-list {
+    grid-template-columns: 1fr;
+  }
+}

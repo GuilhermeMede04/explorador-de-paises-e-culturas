@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Explorador de Países e Culturas</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <header class="site-header">
+    <div class="header-row">
+      <a href="/" class="logo" aria-label="Página inicial">
+        <img src="src/assets/logotipo.png" alt="Logo do Explorador de Países">
+      </a>
+      <nav class="menu" aria-label="Menu principal">
+        <a href="#" class="menu-link inicio">Início</a>
+        <a href="#" class="menu-link">Países</a>
+        <a href="#" class="menu-link">Sobre Nós</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="title-section">
+      <h1>Bem-vindo ao Explorador de Países</h1>
+      <p>Descubra informações fascinantes sobre países ao redor do mundo.</p>
+    </section>
+
+    <!-- 1. Campo de busca por nome do país -->
+    <section class="search-section">
+      <div class="search-container">
+        <input 
+          type="text" 
+          id="searchInput" 
+          class="search-input" 
+          placeholder="Buscar país por nome..."
+          aria-label="Buscar país"
+        >
+      </div>
+    </section>
+
+    <!-- 2. Filtro por continente -->
+    <section class="filter-section">
+      <div class="filter-container">
+        <label for="continentFilter" class="filter-label">Filtrar por continente:</label>
+        <select id="continentFilter" class="filter-select" aria-label="Filtrar por continente">
+          <option value="">Todos os continentes</option>
+          <option value="Africa">África</option>
+          <option value="Americas">América</option>
+          <option value="Asia">Ásia</option>
+          <option value="Europe">Europa</option>
+          <option value="Oceania">Oceania</option>
+        </select>
+      </div>
+    </section>
+
+    <!-- 3. Listagem dos países -->
+    <section class="countries-section">
+      <div class="countries-container">
+        <div id="countriesList" class="countries-list">
+          <!-- Os países serão carregados aqui via JavaScript -->
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="script.js"></script>
+</body>
+
+</html>
