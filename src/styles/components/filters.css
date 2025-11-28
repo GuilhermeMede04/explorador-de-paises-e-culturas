@@ -1,0 +1,76 @@
+/**
+ * Filter Component
+ */
+
+.filter-section {
+  padding: var(--space-lg) var(--space-md);
+  margin-bottom: var(--space-lg);
+}
+
+.filter-wrapper {
+  max-width: 600px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.filter-label {
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-base);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.filter-select {
+  flex: 1;
+  min-width: 0;
+  padding: var(--space-sm) var(--space-md);
+  font-size: var(--font-size-base);
+  color: var(--color-text-primary);
+  background: var(--color-surface-primary);
+  border: 2px solid var(--color-border-light);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  transition: var(--transition-fast);
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%2305233a' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right var(--space-md) center;
+  padding-right: var(--space-xl);
+}
+
+.filter-select:hover {
+  border-color: var(--color-border-medium);
+}
+
+.filter-select:focus {
+  outline: none;
+  border-color: var(--color-brand-blue-medium);
+  box-shadow: var(--shadow-focus);
+}
+
+.filter-select:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .filter-wrapper {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filter-label {
+    white-space: normal;
+  }
+}
+
+@media (max-width: 560px) {
+  .filter-select {
+    font-size: var(--font-size-sm);
+  }
+}

@@ -1,0 +1,66 @@
+/**
+ * Typography - Estilos de texto
+ */
+
+body {
+  background-color: var(--color-brand-blue-light);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-normal);
+  min-height: 100vh;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  line-height: var(--line-height-tight);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+}
+
+h1 {
+  font-size: var(--font-size-5xl);
+  letter-spacing: var(--letter-spacing-tight);
+}
+
+h2 {
+  font-size: var(--font-size-4xl);
+}
+
+h3 {
+  font-size: var(--font-size-3xl);
+}
+
+p {
+  margin-bottom: var(--space-md);
+  line-height: var(--line-height-normal);
+}
+
+strong {
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+}
+
+/* Tipografia Responsiva */
+@media (max-width: 768px) {
+  h1 {
+    font-size: var(--font-size-4xl);
+  }
+  
+  h2 {
+    font-size: var(--font-size-3xl);
+  }
+}
+
+@media (max-width: 560px) {
+  h1 {
+    font-size: var(--font-size-3xl);
+  }
+  
+  body {
+    font-size: var(--font-size-sm);
+  }
+}

@@ -3,70 +3,100 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Explore países e culturas ao redor do mundo com informações detalhadas e atualizadas.">
     <title>Explorador de Países e Culturas</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="src/styles/main.css">
 </head>
-
 <body>
-  <header class="site-header">
-    <div class="header-row">
-      <a href="/" class="logo" aria-label="Página inicial">
-        <img src="src/assets/logotipo.png" alt="Logo do Explorador de Países">
-      </a>
-      <nav class="menu" aria-label="Menu principal">
-        <a href="#" class="menu-link inicio">Início</a>
-        <a href="#" class="menu-link">Países</a>
-        <a href="#" class="menu-link">Sobre Nós</a>
-      </nav>
-    </div>
-  </header>
-
-  <main>
-    <section class="title-section">
-      <h1>Bem-vindo ao Explorador de Países</h1>
-      <p>Descubra informações fascinantes sobre países ao redor do mundo.</p>
-    </section>
-
-    <!-- 1. Campo de busca por nome do país -->
-    <section class="search-section">
-      <div class="search-container">
-        <input 
-          type="text" 
-          id="searchInput" 
-          class="search-input" 
-          placeholder="Buscar país por nome..."
-          aria-label="Buscar país"
-        >
-      </div>
-    </section>
-
-    <!-- 2. Filtro por continente -->
-    <section class="filter-section">
-      <div class="filter-container">
-        <label for="continentFilter" class="filter-label">Filtrar por continente:</label>
-        <select id="continentFilter" class="filter-select" aria-label="Filtrar por continente">
-          <option value="">Todos os continentes</option>
-          <option value="Africa">África</option>
-          <option value="Americas">América</option>
-          <option value="Asia">Ásia</option>
-          <option value="Europe">Europa</option>
-          <option value="Oceania">Oceania</option>
-        </select>
-      </div>
-    </section>
-
-    <!-- 3. Listagem dos países -->
-    <section class="countries-section">
-      <div class="countries-container">
-        <div id="countriesList" class="countries-list">
-          <!-- Os países serão carregados aqui via JavaScript -->
+    <!-- Header -->
+    <header class="site-header" role="banner">
+        <div class="header-container">
+            <a href="/" class="logo" aria-label="Voltar para a página inicial">
+                <img src="src/assets/images/logotipo.png" alt="Logo Explorador de Países" width="150" height="50">
+            </a>
+            
+            <nav class="main-nav" role="navigation" aria-label="Navegação principal">
+                <ul class="nav-list">
+                    <li><a href="#home" class="nav-link nav-link--active">Início</a></li>
+                    <li><a href="#countries" class="nav-link">Países</a></li>
+                    <li><a href="#about" class="nav-link">Sobre Nós</a></li>
+                </ul>
+            </nav>
         </div>
-      </div>
-    </section>
+    </header>
 
-  </main>
+    <!-- Main Content -->
+    <main class="main-content" role="main">
+        <!-- Hero Section -->
+        <section class="hero-section" aria-labelledby="hero-title">
+            <h1 id="hero-title" class="hero-title">Bem-vindo ao Explorador de Países</h1>
+            <p class="hero-description">Descubra informações fascinantes sobre países ao redor do mundo.</p>
+        </section>
 
-  <script src="script.js"></script>
+        <!-- Search Section -->
+        <section class="search-section" aria-labelledby="search-title">
+            <h2 id="search-title" class="visually-hidden">Buscar País</h2>
+            <div class="search-wrapper">
+                <label for="country-search" class="visually-hidden">Digite o nome do país</label>
+                <input 
+                    type="search" 
+                    id="country-search" 
+                    class="search-input" 
+                    placeholder="Buscar país por nome..."
+                    aria-label="Buscar país por nome"
+                    autocomplete="off"
+                >
+            </div>
+        </section>
+
+        <!-- Filter Section -->
+        <section class="filter-section" aria-labelledby="filter-title">
+            <h2 id="filter-title" class="visually-hidden">Filtrar Países</h2>
+            <div class="filter-wrapper">
+                <label for="continent-filter" class="filter-label">Filtrar por continente:</label>
+                <select 
+                    id="continent-filter" 
+                    class="filter-select" 
+                    aria-label="Selecione um continente"
+                >
+                    <option value="">Todos os continentes</option>
+                    <option value="Africa">África</option>
+                    <option value="Americas">América</option>
+                    <option value="Asia">Ásia</option>
+                    <option value="Europe">Europa</option>
+                    <option value="Oceania">Oceania</option>
+                </select>
+            </div>
+        </section>
+
+        <!-- Countries Listing Section -->
+        <section class="countries-section" aria-labelledby="countries-title">
+            <h2 id="countries-title" class="visually-hidden">Lista de Países</h2>
+            <div class="countries-wrapper">
+                <div 
+                    id="countries-list" 
+                    class="countries-grid"
+                    role="region"
+                    aria-live="polite"
+                    aria-label="Resultados da busca de países"
+                >
+                    <!-- Conteúdo carregado dinamicamente via JavaScript -->
+                    <div class="loading-state">
+                        <p>Carregando países...</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="site-footer" role="contentinfo">
+        <div class="footer-container">
+            <p class="footer-text">&copy; 2024 Explorador de Países. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script type="module" src="src/js/main.js"></script>
 </body>
-
 </html>

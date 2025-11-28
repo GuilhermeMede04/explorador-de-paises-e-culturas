@@ -1,0 +1,53 @@
+/**
+ * Search Component
+ */
+
+.search-section {
+  padding: var(--space-lg) var(--space-md);
+  margin-bottom: var(--space-lg);
+}
+
+.search-wrapper {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.search-input {
+  width: 100%;
+  padding: var(--space-md) var(--space-lg);
+  font-size: var(--font-size-lg);
+  color: var(--color-text-primary);
+  background: var(--color-surface-primary);
+  border: 2px solid var(--color-border-light);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition-fast);
+}
+
+.search-input::placeholder {
+  color: var(--color-text-placeholder);
+}
+
+.search-input:hover {
+  border-color: var(--color-border-medium);
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--color-brand-blue-medium);
+  box-shadow: var(--shadow-focus);
+}
+
+/* Estados */
+.search-input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Responsive */
+@media (max-width: 560px) {
+  .search-input {
+    padding: var(--space-sm) var(--space-md);
+    font-size: var(--font-size-base);
+  }
+}

@@ -1,0 +1,20 @@
+/* Base - Fundação */
+@import './base/reset.css';
+@import './base/variables.css';
+@import './base/typography.css';
+
+/* Layout - Estrutura macro */
+@import './layout/header.css';
+@import './layout/footer.css';
+@import './layout/grid.css';
+
+/* Components - Componentes reutilizáveis */
+@import './components/hero.css';
+@import './components/search.css';
+@import './components/filters.css';
+@import './components/cards.css';
+@import './components/navigation.css';
+
+/* Utilities - Classes auxiliares */
+@import './utilities/helpers.css';
+@import './utilities/accessibility.css';

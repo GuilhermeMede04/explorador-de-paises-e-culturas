@@ -1,0 +1,47 @@
+/**
+ * Grid System e Container
+ */
+
+.main-content {
+  width: 100%;
+  min-height: calc(100vh - 200px);
+}
+
+/* Container genérico */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--space-md);
+}
+
+/* Wrapper para seções */
+.section-wrapper {
+  padding: var(--space-lg) var(--space-md);
+  margin-bottom: var(--space-lg);
+}
+
+/* Grid de países */
+.countries-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--space-lg);
+  width: 100%;
+}
+
+/* Responsive Grid */
+@media (max-width: 768px) {
+  .countries-grid {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: var(--space-md);
+  }
+}
+
+@media (max-width: 560px) {
+  .countries-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .section-wrapper {
+    padding: var(--space-md) var(--space-sm);
+  }
+}

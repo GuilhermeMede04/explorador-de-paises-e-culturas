@@ -1,0 +1,75 @@
+/**
+ * Accessibility Utilities
+ * Classes para melhorar acessibilidade
+ */
+
+/* Visually Hidden - Esconde visualmente mas mantém para leitores de tela */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Skip to content link */
+.skip-to-content {
+  position: absolute;
+  top: -100%;
+  left: 0;
+  padding: var(--space-md);
+  background: var(--color-text-primary);
+  color: var(--color-surface-primary);
+  font-weight: var(--font-weight-bold);
+  text-decoration: none;
+  z-index: 1000;
+  transition: var(--transition-fast);
+}
+
+.skip-to-content:focus {
+  top: 0;
+}
+
+/* Focus Visible - Melhora indicação de foco */
+*:focus-visible {
+  outline: 2px solid var(--color-brand-blue-medium);
+  outline-offset: 2px;
+}
+
+/* Reduz movimento para usuários com preferência */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Modo de alto contraste */
+@media (prefers-contrast: high) {
+  :root {
+    --color-border-light: rgba(5, 35, 58, 0.3);
+    --color-border-medium: rgba(5, 35, 58, 0.5);
+  }
+  
+  .country-card {
+    border-width: 2px;
+  }
+  
+  .search-input,
+  .filter-select {
+    border-width: 2px;
+  }
+}
+
+/* Modo escuro (preparação futura) */
+@media (prefers-color-scheme: dark) {
+  /* Adicione variáveis para tema escuro aqui no futuro */
+}
