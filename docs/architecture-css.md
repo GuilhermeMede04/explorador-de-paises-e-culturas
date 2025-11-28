@@ -1,6 +1,4 @@
-# 📚 Documentação da Arquitetura 
-
-## Estrutura de Pastas
+# 📁 Estrutura de Arquivos CSS
 
 ```
 src/styles/
