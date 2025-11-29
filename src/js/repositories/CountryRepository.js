@@ -31,4 +31,16 @@ export class CountryRepository {
       throw error;
     }
   }
+  async fetchByCode(code) {
+  try {
+    const url = `${API_CONFIG.BASE_URL}/alpha/${code}`;
+    const response = await fetch(url);
+    if (!response.ok) throw new Error('Falha ao buscar detalhes do país.');
+    const data = await response.json();
+    return data[0];
+  } catch (err) {
+    console.error('[Repository] Erro ao buscar país por código:', err);
+    throw err;
+  }
+}
 }

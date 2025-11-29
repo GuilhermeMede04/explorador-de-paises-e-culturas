@@ -44,4 +44,33 @@ export class CountryService {
   getAllCountries() {
     return this.countries;
   }
+  async getCountryByCode(code) {
+  try {
+    const data = await this.repository.fetchByCode(code);
+    return data; // dados brutos da API; view tratará
+  } catch (err) {
+    throw new Error('Não foi possível carregar detalhes do país.');
+  }
+}
+toggleFavorite(code) {
+  const favs = this.getFavorites();
+
+  if (favs.includes(code)) {
+    const updated = favs.filter(c => c !== code);
+    localStorage.setItem('favoriteCountries', JSON.stringify(updated));
+    return false; // removido
+  } else {
+    favs.push(code);
+    localStorage.setItem('favoriteCountries', JSON.stringify(favs));
+    return true; // adicionado
+  }
+}
+
+getFavorites() {
+  return JSON.parse(localStorage.getItem('favoriteCountries') || '[]');
+}
+
+isFavorite(code) {
+  return this.getFavorites().includes(code);
+}
 }

@@ -1,0 +1,15 @@
+.main-content h1 {
+    text-align: center;
+    margin: 20px 0;
+}
+
+#favorites-list {
+    padding: 20px;
+}
+
+#favorites-list p {
+    text-align: center;
+    font-size: 18px;
+    padding: 20px;
+    opacity: 0.8;
+}

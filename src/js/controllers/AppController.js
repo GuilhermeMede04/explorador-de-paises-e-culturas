@@ -30,7 +30,8 @@ export class AppController {
       this._validateElements();
       await this._loadCountries();
       this._setupEventListeners();
-      
+      this._setupCountryCardListeners();
+
       console.log('[Controller] Aplicação inicializada com sucesso ✅');
     } catch (error) {
       console.error('[Controller] Erro ao inicializar:', error);
@@ -63,16 +64,15 @@ export class AppController {
    * Carrega países da API
    */
   async _loadCountries() {
-    try {
-      this._renderLoading();
-      
-      const countries = await this.countryService.loadAllCountries();
-      
-      this._renderCountries(countries);
-    } catch (error) {
-      throw error;
-    }
+  try {
+    this._renderLoading();
+    const countries = await this.countryService.loadAllCountries();
+    this._renderCountries(countries);
+  } catch (err) {
+    this._renderError('Falha ao carregar países. Verifique sua conexão.');
   }
+}
+
 
   /**
    * Configura event listeners
@@ -124,4 +124,49 @@ export class AppController {
     const html = CountryView.renderError(errorMessage);
     setHTML(this.elements.countriesList, html);
   }
+  _setupCountryCardListeners() {
+  addEventListener(document, 'click', async (e) => {
+
+    if (e.target.matches('[data-details]')) {
+      const code = e.target.dataset.details;
+      await this._openDetailsModal(code);
+    }
+
+   
+    if (e.target.matches('[data-fav]')) {
+      const code = e.target.dataset.fav;
+      this.countryService.toggleFavorite(code);
+      e.target.classList.toggle('favorite');
+    }
+
+    
+    if (e.target.id === 'modal-overlay' || e.target.id === 'modal-close') {
+      document.querySelector('#modal-overlay').remove();
+    }
+
+   
+    if (e.target.id === 'fav-toggle') {
+      const overlay = document.querySelector('#modal-overlay');
+      const code = overlay.dataset.code;
+      const updated = this.countryService.toggleFavorite(code);
+
+      e.target.textContent = updated
+        ? '★ Remover dos favoritos'
+        : '☆ Adicionar aos favoritos';
+    }
+  });
+}
+async _openDetailsModal(code) {
+  try {
+    const data = await this.countryService.getCountryByCode(code);
+    const isFav = this.countryService.isFavorite(code);
+
+    const html = CountryView.renderDetailsModal(data, isFav);
+
+    document.body.insertAdjacentHTML('beforeend', html);
+
+  } catch (error) {
+    alert('Erro ao carregar detalhes do país.');
+  }
+}
 }
