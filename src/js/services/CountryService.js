@@ -6,9 +6,10 @@ import { CountryRepository } from '../repositories/CountryRepository.js';
 
 export class CountryService {
   constructor() {
-    this.repository = new CountryRepository();
-    this.countries = [];
-  }
+  this.repository = new CountryRepository();
+  this.countries = [];
+  this.favorites = this.getFavorites(); // ← ESSENCIAL
+}
 
   /**
    * Carrega todos os países
@@ -44,33 +45,52 @@ export class CountryService {
   getAllCountries() {
     return this.countries;
   }
+
+  /**
+   * Buscar detalhes completos por código (modal)
+   */
   async getCountryByCode(code) {
-  try {
-    const data = await this.repository.fetchByCode(code);
-    return data; // dados brutos da API; view tratará
-  } catch (err) {
-    throw new Error('Não foi possível carregar detalhes do país.');
+    try {
+      const data = await this.repository.fetchByCode(code);
+      return data; // dados completos da API
+    } catch (err) {
+      throw new Error('Não foi possível carregar detalhes do país.');
+    }
   }
-}
-toggleFavorite(code) {
-  const favs = this.getFavorites();
 
-  if (favs.includes(code)) {
-    const updated = favs.filter(c => c !== code);
-    localStorage.setItem('favoriteCountries', JSON.stringify(updated));
-    return false; // removido
+  /**
+   * Alternar favorito (add/remove)
+   */
+ toggleFavorite(code) {
+  if (this.favorites.includes(code)) {
+    this.favorites = this.favorites.filter(c => c !== code);
   } else {
-    favs.push(code);
-    localStorage.setItem('favoriteCountries', JSON.stringify(favs));
-    return true; // adicionado
+    this.favorites.push(code);
   }
+
+  localStorage.setItem('favoriteCountries', JSON.stringify(this.favorites));
+  return this.favorites.includes(code);
 }
 
-getFavorites() {
-  return JSON.parse(localStorage.getItem('favoriteCountries') || '[]');
-}
+  getFavorites() {
+    try {
+      return JSON.parse(localStorage.getItem('favoriteCountries')) || [];
+    } catch {
+      return [];
+    }
+  }
 
-isFavorite(code) {
-  return this.getFavorites().includes(code);
-}
+  /**
+   * Verifica se o país é favorito
+   */
+  isFavorite(code) {
+    return this.favorites.includes(code);
+  }
+
+  /**
+   * Retorna objetos Country dos favoritos
+   */
+  getFavoriteCountries() {
+    return this.countries.filter(c => this.isFavorite(c.code));
+  }
 }

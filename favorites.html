@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Países Favoritos</title>
+
+    <link rel="stylesheet" href="src/styles/main.css">
+</head>
+<body>
+
+<header class="site-header">
+    <div class="header-container">
+        <a href="index.html" class="logo">
+            <img src="src/assets/images/logotipo.png" width="150">
+        </a>
+
+        <nav class="main-nav">
+            <ul class="nav-list">
+                <li><a href="index.html" class="nav-link">Início</a></li>
+                <li><a href="favorites.html" class="nav-link nav-link--active">Favoritos</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<main class="main-content">
+
+    <section class="countries-section">
+        <h2 class="hero-title">Meus Países Favoritos</h2>
+
+        <div id="favorites-list" class="countries-grid">
+            <p>Carregando favoritos...</p>
+        </div>
+    </section>
+
+</main>
+
+<script type="module" src="src/js/favorites.js"></script>
+
+</body>
+</html>

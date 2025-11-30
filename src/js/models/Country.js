@@ -4,51 +4,67 @@
 
 export class Country {
   constructor(data) {
+
+    /** Identificador ISO usado para favoritos e detalhes */
+    this.code = data.cca3 || data.cca2 || data.ccn3 || 'XXX';
+
+    /** Nome completo + comum */
     this.name = data.name?.common || 'Desconhecido';
-    this.capital = this._extractCapital(data.capital);
-    this.region = data.region || 'N/A';
-    this.population = data.population || 0;
+    this.officialName = data.name?.official || this.name;
+
+    /** Bandeiras */
     this.flags = {
       svg: data.flags?.svg || '',
       png: data.flags?.png || '',
     };
+
+    /** Capital */
+    this.capital = Array.isArray(data.capital) && data.capital.length > 0
+      ? data.capital[0]
+      : 'N/A';
+
+    /** Região */
+    this.region = data.region || 'N/A';
+
+    /** População */
+    this.population = data.population || 0;
+
+    /** Área */
+    this.area = data.area || 0;
+
+    /** Coordenadas */
+    this.latlng = data.latlng || [0, 0];
+
+    /** Fronteiras */
+    this.borders = data.borders || [];
+
+    /** Idiomas */
+    this.languages = data.languages || {};
+
+    /** Moedas */
+    this.currencies = data.currencies || {};
+
+    /** Domínios */
+    this.tld = data.tld || [];
   }
 
-  /**
-   * Extrai a capital (primeiro elemento do array)
-   */
-  _extractCapital(capital) {
-    if (!capital || !Array.isArray(capital) || capital.length === 0) {
-      return 'N/A';
-    }
-    return capital[0];
-  }
-
-  /**
-   * Retorna URL da bandeira (prioriza SVG)
-   */
+  /** Retorna URL da bandeira */
   getFlagUrl() {
     return this.flags.svg || this.flags.png || '';
   }
 
-  /**
-   * Retorna população formatada
-   */
+  /** População formatada */
   getFormattedPopulation() {
     return new Intl.NumberFormat('pt-BR').format(this.population);
   }
 
-  /**
-   * Verifica se o país corresponde ao termo de busca
-   */
+  /** Verifica busca */
   matchesSearch(searchTerm) {
     if (!searchTerm) return true;
     return this.name.toLowerCase().includes(searchTerm.toLowerCase());
   }
 
-  /**
-   * Verifica se o país está na região especificada
-   */
+  /** Verifica região */
   matchesRegion(region) {
     if (!region) return true;
     return this.region === region;

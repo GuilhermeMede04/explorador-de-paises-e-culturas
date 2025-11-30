@@ -25,12 +25,15 @@ export class AppController {
   async init() {
     try {
       console.log('[Controller] Inicializando aplicação...');
-      
+
       this._cacheElements();
       this._validateElements();
       await this._loadCountries();
       this._setupEventListeners();
       this._setupCountryCardListeners();
+
+      // Permite que outras partes da app acessem o service
+      window.__APP__ = this;
 
       console.log('[Controller] Aplicação inicializada com sucesso ✅');
     } catch (error) {
@@ -38,7 +41,6 @@ export class AppController {
       this._renderError(error.message);
     }
   }
-
 
   _cacheElements() {
     this.elements = {
@@ -64,15 +66,14 @@ export class AppController {
    * Carrega países da API
    */
   async _loadCountries() {
-  try {
-    this._renderLoading();
-    const countries = await this.countryService.loadAllCountries();
-    this._renderCountries(countries);
-  } catch (err) {
-    this._renderError('Falha ao carregar países. Verifique sua conexão.');
+    try {
+      this._renderLoading();
+      const countries = await this.countryService.loadAllCountries();
+      this._renderCountries(countries);
+    } catch (err) {
+      this._renderError('Falha ao carregar países. Verifique sua conexão.');
+    }
   }
-}
-
 
   /**
    * Configura event listeners
@@ -102,71 +103,82 @@ export class AppController {
   }
 
   /**
-   * Renderiza lista de países
+   * Renderização de UI
    */
   _renderCountries(countries) {
     const html = CountryView.renderList(countries);
     setHTML(this.elements.countriesList, html);
   }
 
-  /**
-   * Renderiza loading
-   */
   _renderLoading() {
     const html = CountryView.renderLoading();
     setHTML(this.elements.countriesList, html);
   }
 
-  /**
-   * Renderiza erro
-   */
   _renderError(errorMessage) {
     const html = CountryView.renderError(errorMessage);
     setHTML(this.elements.countriesList, html);
   }
+
+  /**
+   * Eventos de clique nos cards e no modal
+   */
   _setupCountryCardListeners() {
-  addEventListener(document, 'click', async (e) => {
+    addEventListener(document, 'click', async (e) => {
 
-    if (e.target.matches('[data-details]')) {
-      const code = e.target.dataset.details;
-      await this._openDetailsModal(code);
-    }
+      // Abrir detalhes
+      if (e.target.matches('[data-details]')) {
+        const code = e.target.dataset.details;
+        await this._openDetailsModal(code);
+      }
 
-   
-    if (e.target.matches('[data-fav]')) {
-      const code = e.target.dataset.fav;
-      this.countryService.toggleFavorite(code);
-      e.target.classList.toggle('favorite');
-    }
+      // Favoritar nos cards
+      if (e.target.matches('[data-fav]')) {
+        const code = e.target.dataset.fav;
 
-    
-    if (e.target.id === 'modal-overlay' || e.target.id === 'modal-close') {
-      document.querySelector('#modal-overlay').remove();
-    }
+        const added = this.countryService.toggleFavorite(code);
+        console.log("Novo estado favorito:", added);
 
-   
-    if (e.target.id === 'fav-toggle') {
-      const overlay = document.querySelector('#modal-overlay');
-      const code = overlay.dataset.code;
-      const updated = this.countryService.toggleFavorite(code);
+        // APLICA a classe .favorite corretamente
+        e.target.classList.toggle('favorite', added);
+      }
 
-      e.target.textContent = updated
-        ? '★ Remover dos favoritos'
-        : '☆ Adicionar aos favoritos';
-    }
-  });
-}
-async _openDetailsModal(code) {
-  try {
-    const data = await this.countryService.getCountryByCode(code);
-    const isFav = this.countryService.isFavorite(code);
+      // Fechar modal
+      if (e.target.id === 'modal-overlay' || e.target.id === 'modal-close') {
+        document.querySelector('#modal-overlay')?.remove();
+      }
 
-    const html = CountryView.renderDetailsModal(data, isFav);
+      // Favoritar pelo botão dentro do modal
+      if (e.target.id === 'fav-toggle') {
+        const overlay = document.querySelector('#modal-overlay');
+        const code = overlay.dataset.code;
 
-    document.body.insertAdjacentHTML('beforeend', html);
+        const updated = this.countryService.toggleFavorite(code);
 
-  } catch (error) {
-    alert('Erro ao carregar detalhes do país.');
+        e.target.textContent = updated
+          ? '★ Remover dos favoritos'
+          : '☆ Adicionar aos favoritos';
+      }
+    });
   }
-}
+
+  /**
+   * Abre o modal de detalhes
+   */
+  async _openDetailsModal(code) {
+    try {
+      const data = await this.countryService.getCountryByCode(code);
+      const isFav = this.countryService.isFavorite(code);
+
+      const html = CountryView.renderDetailsModal(data, isFav);
+
+      document.body.insertAdjacentHTML('beforeend', html);
+
+      // Define o código dentro do dataset do overlay (para o fav-toggle funcionar)
+      document.querySelector('#modal-overlay').dataset.code = code;
+
+    } catch (error) {
+      alert('Erro ao carregar detalhes do país.');
+    }
+  }
 }

@@ -7,7 +7,7 @@ export const API_CONFIG = {
   ENDPOINTS: {
     ALL: '/all',
   },
-  FIELDS: 'name,flags,capital,region,population',
+  FIELDS: 'name,flags,capital,region,population,cca2,cca3,tld',
   TIMEOUT: 15000,
 };
 
