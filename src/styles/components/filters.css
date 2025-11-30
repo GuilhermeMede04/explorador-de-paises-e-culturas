@@ -8,11 +8,12 @@
 }
 
 .filter-wrapper {
-  max-width: 600px;
+  max-width: 900px;
   margin: 0 auto;
   display: flex;
   align-items: center;
   gap: var(--space-md);
+  flex-wrap: wrap;
 }
 
 .filter-label {
@@ -25,7 +26,7 @@
 
 .filter-select {
   flex: 1;
-  min-width: 0;
+  min-width: 200px;
   padding: var(--space-sm) var(--space-md);
   font-size: var(--font-size-base);
   color: var(--color-text-primary);
@@ -66,6 +67,10 @@
 
   .filter-label {
     white-space: normal;
+  }
+
+  .filter-select {
+    min-width: 100%;
   }
 }
 

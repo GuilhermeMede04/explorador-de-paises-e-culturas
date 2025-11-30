@@ -1,160 +1,110 @@
-/**
- * View de País - Renderização de UI
- */
-import { MESSAGES } from '../config/constants.js';
-import { CountryService } from '../services/CountryService.js';
-
-const service = new CountryService();
-
-export class CountryView {
-
-  /**
-   * Renderiza um card de país
-   */
-  static renderCard(country) {
-    const name = country.name;
-    const flag = country.getFlagUrl();
-    const capital = country.capital;
-    const region = country.region;
-    const population = country.getFormattedPopulation();
-
-    // Verifica se é favorito (para deixar o botão amarelo)
-    const isFav = service.isFavorite(country.code);
-
-    return `
-      <div class="country-card" data-country="${country.code}">
-        <img 
-          src="${flag}" 
-          alt="Bandeira de ${this._escapeHtml(name)}"
-          class="country-flag"
-          loading="lazy"
-        >
-
-        <div class="country-info">
-          <div class="country-name">${this._escapeHtml(name)}</div>
-
-          <div class="country-detail"><strong>Capital:</strong> ${this._escapeHtml(capital)}</div>
-          <div class="country-detail"><strong>Região:</strong> ${this._escapeHtml(region)}</div>
-          <div class="country-detail"><strong>População:</strong> ${population}</div>
-
-          <div class="country-actions">
-            <button class="details-btn" data-details="${country.code}">
-              Detalhes
-            </button>
-
-            <button 
-              class="fav-btn ${isFav ? 'favorite' : ''}" 
-              data-fav="${country.code}">
-              ⭐
-            </button>
-          </div>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Explore países e culturas ao redor do mundo com informações detalhadas e atualizadas.">
+    <title>Explorador de Países e Culturas</title>
+    <link rel="stylesheet" href="src/styles/main.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="site-header" role="banner">
+        <div class="header-container">
+            <a href="index.html" class="logo" aria-label="Voltar para a página inicial">
+                <img src="src/assets/images/logotipo.png" alt="Logo Explorador de Países" width="150" height="50">
+            </a>
+            
+            <nav class="main-nav" role="navigation" aria-label="Navegação principal">
+                <ul class="nav-list">
+                    <li><a href="index.html" class="nav-link nav-link--active">Início</a></li>
+                    <li><a href="#countries" class="nav-link">Países</a></li>
+                    <li><a href="favorites.html" class="nav-link">Favoritos (<span id="fav-count">0</span>)</a></li>
+                </ul>
+            </nav>
         </div>
-      </div>
-    `;
-  }
+    </header>
 
-  /**
-   * Renderiza lista de países
-   */
-  static renderList(countries) {
-    if (!countries || countries.length === 0) {
-      return this.renderEmpty();
-    }
+    <!-- Main Content -->
+    <main class="main-content" role="main">
+        <!-- Hero Section -->
+        <section class="hero-section" aria-labelledby="hero-title">
+            <h1 id="hero-title" class="hero-title">Bem-vindo ao Explorador de Países</h1>
+            <p class="hero-description">Descubra informações fascinantes sobre países ao redor do mundo.</p>
+        </section>
 
-    return countries.map(country => this.renderCard(country)).join('');
-  }
+        <!-- Search Section -->
+        <section class="search-section" aria-labelledby="search-title">
+            <h2 id="search-title" class="visually-hidden">Buscar País</h2>
+            <div class="search-wrapper">
+                <label for="country-search" class="visually-hidden">Digite o nome do país</label>
+                <input 
+                    type="search" 
+                    id="country-search" 
+                    class="search-input" 
+                    placeholder="Buscar país por nome..."
+                    aria-label="Buscar país por nome"
+                    autocomplete="off"
+                >
+            </div>
+        </section>
 
-  /**
-   * Renderiza estado de loading
-   */
-  static renderLoading() {
-    return `
-      <div class="loading">
-        ${MESSAGES.LOADING}
-      </div>
-    `;
-  }
+        <!-- Filter Section -->
+        <section class="filter-section" aria-labelledby="filter-title">
+            <h2 id="filter-title" class="visually-hidden">Filtrar Países</h2>
+            <div class="filter-wrapper">
+                <label for="continent-filter" class="filter-label">Filtrar por continente:</label>
+                <select 
+                    id="continent-filter" 
+                    class="filter-select" 
+                    aria-label="Selecione um continente"
+                >
+                    <option value="">Todos os continentes</option>
+                    <option value="Africa">África</option>
+                    <option value="Americas">América</option>
+                    <option value="Asia">Ásia</option>
+                    <option value="Europe">Europa</option>
+                    <option value="Oceania">Oceania</option>
+                </select>
 
-  /**
-   * Renderiza estado vazio
-   */
-  static renderEmpty() {
-    return `
-      <div class="empty-state">
-        ${MESSAGES.NO_RESULTS}
-      </div>
-    `;
-  }
+                <button id="show-favorites-btn" class="filter-btn" aria-label="Mostrar favoritos">
+                    ⭐ Mostrar Favoritos
+                </button>
 
-  /**
-   * Renderiza erro
-   */
-  static renderError(errorMessage) {
-    return `
-      <div class="empty-state">
-        <p>${MESSAGES.ERROR_LOAD}</p>
-        <p style="font-size: 0.9em; color: #666;">
-          Erro: ${this._escapeHtml(errorMessage)}
-        </p>
-        <button onclick="location.reload()"
-          style="margin-top: 10px; padding: 8px 16px; cursor: pointer;">
-          ${MESSAGES.RETRY_BUTTON}
-        </button>
-      </div>
-    `;
-  }
+                <button id="show-all-btn" class="filter-btn" aria-label="Mostrar todos" style="display: none;">
+                    🌍 Mostrar Todos
+                </button>
+            </div>
+        </section>
 
+        <!-- Countries Listing Section -->
+        <section class="countries-section" aria-labelledby="countries-title">
+            <h2 id="countries-title" class="visually-hidden">Lista de Países</h2>
+            <div class="countries-wrapper">
+                <div 
+                    id="countries-list" 
+                    class="countries-grid"
+                    role="region"
+                    aria-live="polite"
+                    aria-label="Resultados da busca de países"
+                >
+                    <div class="loading-state">
+                        <p>Carregando países...</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
 
+    <div id="modal-container"></div>
 
-  static _escapeHtml(text) {
-    const div = document.createElement('div');
-    div.textContent = text || '';
-    return div.innerHTML;
-  }
-
-
-  static renderDetailsModal(country, isFavorite) {
-    const name = country.name?.official || country.name?.common;
-    const flag = country.flags?.svg || country.flags?.png;
-    const population = country.population?.toLocaleString('pt-BR') || 'N/A';
-    const area = country.area ? `${country.area.toLocaleString('pt-BR')} km²` : 'N/A';
-    const capital = country.capital?.[0] || 'N/A';
-    const borders = country.borders?.join(', ') || 'Nenhuma';
-    const languages = country.languages ? Object.values(country.languages).join(', ') : 'N/A';
-
-    const currencies = country.currencies
-      ? Object.values(country.currencies).map(c => `${c.name} (${c.symbol})`).join(', ')
-      : 'N/A';
-
-    const tld = country.tld?.join(', ') || 'N/A';
-
-    const latlng = country.latlng || [0, 0];
-    const mapUrl = `https://www.google.com/maps?q=${latlng[0]},${latlng[1]}&z=5&output=embed`;
-
-    return `
-      <div class="modal-overlay" id="modal-overlay" data-code="${country.code}">
-        <div class="modal">
-          <button class="modal-close" id="modal-close">✖</button>
-
-          <h2>${name}</h2>
-          <img src="${flag}" class="modal-flag">
-
-          <p><strong>Capital:</strong> ${capital}</p>
-          <p><strong>Área:</strong> ${area}</p>
-          <p><strong>População:</strong> ${population}</p>
-          <p><strong>Idiomas:</strong> ${languages}</p>
-          <p><strong>Moedas:</strong> ${currencies}</p>
-          <p><strong>Domínios:</strong> ${tld}</p>
-          <p><strong>Fronteiras:</strong> ${borders}</p>
-
-          <h3>Mapa</h3>
-          <iframe src="${mapUrl}" width="100%" height="300" loading="lazy"></iframe>
-
-          <button class="fav-toggle-btn" id="fav-toggle">
-            ${isFavorite ? '★ Remover dos favoritos' : '☆ Adicionar aos favoritos'}
-          </button>
+    <footer class="site-footer" role="contentinfo">
+        <div class="footer-container">
+            <p class="footer-text">&copy; 2024 Explorador de Países. Todos os direitos reservados.</p>
         </div>
-      </div>
-    `;
-  }
-}
+    </footer>
+
+    <!-- Scripts -->
+    <script type="module" src="src/js/main.js"></script>
+</body>
+</html>

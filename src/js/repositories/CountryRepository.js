@@ -6,7 +6,9 @@ import { API_CONFIG } from '../config/constants.js';
 import { Country } from '../models/Country.js';
 
 export class CountryRepository {
-
+  /**
+   * Busca todos os países da API (campos otimizados)
+   */
   async fetchAll() {
     try {
       const url = `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.ALL}?fields=${API_CONFIG.FIELDS}`;
@@ -24,6 +26,7 @@ export class CountryRepository {
       
       console.log('[Repository] Países recebidos:', data.length);
       
+      // Converte dados brutos em objetos Country
       return data.map(countryData => new Country(countryData));
       
     } catch (error) {
@@ -31,16 +34,42 @@ export class CountryRepository {
       throw error;
     }
   }
+
+  /**
+   * Busca detalhes completos de um país por código
+   */
   async fetchByCode(code) {
-  try {
-    const url = `${API_CONFIG.BASE_URL}/alpha/${code}`;
-    const response = await fetch(url);
-    if (!response.ok) throw new Error('Falha ao buscar detalhes do país.');
-    const data = await response.json();
-    return data[0];
-  } catch (err) {
-    console.error('[Repository] Erro ao buscar país por código:', err);
-    throw err;
+    try {
+      // Tenta buscar por código alpha (cca2/cca3)
+      let url = `${API_CONFIG.BASE_URL}/alpha/${encodeURIComponent(code)}`;
+      
+      console.log('[Repository] Buscando detalhes:', url);
+      
+      let response = await fetch(url);
+
+      // Se falhar, tenta buscar por nome
+      if (!response.ok) {
+        url = `${API_CONFIG.BASE_URL}/name/${encodeURIComponent(code)}?fullText=true`;
+        console.log('[Repository] Tentando por nome:', url);
+        response = await fetch(url);
+      }
+
+      if (!response.ok) {
+        throw new Error(`País não encontrado: ${code}`);
+      }
+
+      const data = await response.json();
+      
+      // A API retorna array para busca por nome, objeto único para código
+      const countryData = Array.isArray(data) ? data[0] : data;
+      
+      console.log('[Repository] Detalhes recebidos:', countryData.name?.common);
+      
+      return countryData;
+      
+    } catch (error) {
+      console.error('[Repository] Erro ao buscar detalhes:', error);
+      throw error;
+    }
   }
-}
 }

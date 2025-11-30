@@ -4,69 +4,95 @@
 
 export class Country {
   constructor(data) {
-
-    /** Identificador ISO usado para favoritos e detalhes */
-    this.code = data.cca3 || data.cca2 || data.ccn3 || 'XXX';
-
-    /** Nome completo + comum */
     this.name = data.name?.common || 'Desconhecido';
-    this.officialName = data.name?.official || this.name;
-
-    /** Bandeiras */
+    this.officialName = data.name?.official || '';
+    this.capital = this._extractCapital(data.capital);
+    this.region = data.region || 'N/A';
+    this.population = data.population || 0;
+    this.area = data.area || 0;
     this.flags = {
       svg: data.flags?.svg || '',
       png: data.flags?.png || '',
     };
-
-    /** Capital */
-    this.capital = Array.isArray(data.capital) && data.capital.length > 0
-      ? data.capital[0]
-      : 'N/A';
-
-    /** Região */
-    this.region = data.region || 'N/A';
-
-    /** População */
-    this.population = data.population || 0;
-
-    /** Área */
-    this.area = data.area || 0;
-
-    /** Coordenadas */
-    this.latlng = data.latlng || [0, 0];
-
-    /** Fronteiras */
+    
+    // Códigos de identificação
+    this.cca2 = data.cca2 || ''; 
+    this.cca3 = data.cca3 || ''; 
+    
+    // Dados adicionais
     this.borders = data.borders || [];
-
-    /** Idiomas */
     this.languages = data.languages || {};
-
-    /** Moedas */
     this.currencies = data.currencies || {};
-
-    /** Domínios */
+    this.timezones = data.timezones || [];
     this.tld = data.tld || [];
+    this.subregion = data.subregion || '';
+    this.latlng = data.latlng || [0, 0];
+    
+    this._rawData = data;
   }
 
-  /** Retorna URL da bandeira */
+  /**
+   * Extrai a capital (primeiro elemento do array)
+   */
+  _extractCapital(capital) {
+    if (!capital || !Array.isArray(capital) || capital.length === 0) {
+      return 'N/A';
+    }
+    return capital[0];
+  }
+
+  /**
+   * Retorna URL da bandeira (prioriza SVG)
+   */
   getFlagUrl() {
     return this.flags.svg || this.flags.png || '';
   }
 
-  /** População formatada */
+  /**
+   * Retorna população formatada
+   */
   getFormattedPopulation() {
+    if (!this.population) return '0';
     return new Intl.NumberFormat('pt-BR').format(this.population);
   }
 
-  /** Verifica busca */
-  matchesSearch(searchTerm) {
-    if (!searchTerm) return true;
-    return this.name.toLowerCase().includes(searchTerm.toLowerCase());
+  /**
+   * Retorna área formatada
+   */
+  getFormattedArea() {
+    if (!this.area) return '0';
+    return new Intl.NumberFormat('pt-BR').format(this.area);
   }
 
-  /** Verifica região */
+  /**
+   * Retorna código único do país
+   */
+  getCode() {
+    return this.cca3 || this.cca2 || this.name;
+  }
+
+  /**
+   * Verifica se o país corresponde ao termo de busca
+   */
+  matchesSearch(searchTerm) {
+    if (!searchTerm) return true;
+    const lower = searchTerm.toLowerCase();
+    return this.name.toLowerCase().includes(lower) ||
+           this.officialName.toLowerCase().includes(lower);
+  }
+
+  /**
+   * Verifica se o país está na região especificada
+   */
   matchesRegion(region) {
     if (!region) return true;
     return this.region === region;
+  }
+
+  /**
+   * Retorna dados brutos para modal
+   */
+  getRawData() {
+    return this._rawData;
   }
 }

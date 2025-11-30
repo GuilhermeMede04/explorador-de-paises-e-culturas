@@ -1,28 +1,23 @@
 /**
  * View de País - Renderização de UI
  */
-import { MESSAGES } from '../config/constants.js';
-import { CountryService } from '../services/CountryService.js';
 
-const service = new CountryService();
+import { MESSAGES } from '../config/constants.js';
 
 export class CountryView {
-
   /**
    * Renderiza um card de país
    */
-  static renderCard(country) {
+  static renderCard(country, isFavorite = false) {
     const name = country.name;
     const flag = country.getFlagUrl();
     const capital = country.capital;
     const region = country.region;
     const population = country.getFormattedPopulation();
-
-    // Verifica se é favorito (para deixar o botão amarelo)
-    const isFav = service.isFavorite(country.code);
+    const code = country.cca3 || country.cca2 || name;
 
     return `
-      <div class="country-card" data-country="${country.code}">
+      <article class="country-card" data-country="${this._escapeHtml(code)}">
         <img 
           src="${flag}" 
           alt="Bandeira de ${this._escapeHtml(name)}"
@@ -31,37 +26,60 @@ export class CountryView {
         >
 
         <div class="country-info">
-          <div class="country-name">${this._escapeHtml(name)}</div>
+          <h3 class="country-name">${this._escapeHtml(name)}</h3>
 
-          <div class="country-detail"><strong>Capital:</strong> ${this._escapeHtml(capital)}</div>
-          <div class="country-detail"><strong>Região:</strong> ${this._escapeHtml(region)}</div>
-          <div class="country-detail"><strong>População:</strong> ${population}</div>
+          <div class="country-detail">
+            <strong>Capital:</strong>
+            <span>${this._escapeHtml(capital)}</span>
+          </div>
+
+          <div class="country-detail">
+            <strong>Região:</strong>
+            <span>${this._escapeHtml(region)}</span>
+          </div>
+
+          <div class="country-detail">
+            <strong>População:</strong>
+            <span>${population}</span>
+          </div>
 
           <div class="country-actions">
-            <button class="details-btn" data-details="${country.code}">
-              Detalhes
+            <button 
+              class="details-btn" 
+              data-details="${this._escapeHtml(code)}"
+              aria-label="Ver detalhes de ${this._escapeHtml(name)}"
+            >
+              📋 Detalhes
             </button>
 
             <button 
-              class="fav-btn ${isFav ? 'favorite' : ''}" 
-              data-fav="${country.code}">
-              ⭐
+              class="fav-btn ${isFavorite ? 'favorite' : ''}" 
+              data-fav="${this._escapeHtml(code)}"
+              aria-label="${isFavorite ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}"
+            >
+              ${isFavorite ? '★' : '☆'}
             </button>
           </div>
         </div>
-      </div>
+      </article>
     `;
   }
 
   /**
    * Renderiza lista de países
    */
-  static renderList(countries) {
+  static renderList(countries, favoriteCodes = new Set()) {
     if (!countries || countries.length === 0) {
       return this.renderEmpty();
     }
 
-    return countries.map(country => this.renderCard(country)).join('');
+    return countries
+      .map(country => {
+        const code = country.cca3 || country.cca2 || country.name;
+        const isFavorite = favoriteCodes.has(code);
+        return this.renderCard(country, isFavorite);
+      })
+      .join('');
   }
 
   /**
@@ -69,8 +87,8 @@ export class CountryView {
    */
   static renderLoading() {
     return `
-      <div class="loading">
-        ${MESSAGES.LOADING}
+      <div class="loading-state" role="status" aria-live="polite">
+        <p>${MESSAGES.LOADING}</p>
       </div>
     `;
   }
@@ -80,8 +98,8 @@ export class CountryView {
    */
   static renderEmpty() {
     return `
-      <div class="empty-state">
-        ${MESSAGES.NO_RESULTS}
+      <div class="empty-state" role="status" aria-live="polite">
+        <p>${MESSAGES.NO_RESULTS}</p>
       </div>
     `;
   }
@@ -91,70 +109,160 @@ export class CountryView {
    */
   static renderError(errorMessage) {
     return `
-      <div class="empty-state">
+      <div class="empty-state" role="alert" aria-live="assertive">
         <p>${MESSAGES.ERROR_LOAD}</p>
         <p style="font-size: 0.9em; color: #666;">
           Erro: ${this._escapeHtml(errorMessage)}
         </p>
-        <button onclick="location.reload()"
-          style="margin-top: 10px; padding: 8px 16px; cursor: pointer;">
+        <button 
+          onclick="location.reload()"
+          class="retry-btn"
+          style="margin-top: 10px; padding: 8px 16px; cursor: pointer;"
+        >
           ${MESSAGES.RETRY_BUTTON}
         </button>
       </div>
     `;
   }
 
+  /**
+   * Renderiza modal com detalhes do país
+   */
+  static renderDetailsModal(countryData, isFavorite = false) {
+    const name = countryData.name?.official || countryData.name?.common || 'País';
+    const flag = countryData.flags?.svg || countryData.flags?.png || '';
+    const population = countryData.population 
+      ? countryData.population.toLocaleString('pt-BR') 
+      : 'N/A';
+    const area = countryData.area 
+      ? `${countryData.area.toLocaleString('pt-BR')} km²` 
+      : 'N/A';
+    const capital = countryData.capital?.[0] || 'N/A';
+    const region = countryData.region || 'N/A';
+    const subregion = countryData.subregion || 'N/A';
+    const borders = countryData.borders?.join(', ') || 'Nenhuma fronteira';
+    
+    const languages = countryData.languages 
+      ? Object.values(countryData.languages).join(', ') 
+      : 'N/A';
 
+    const currencies = countryData.currencies
+      ? Object.values(countryData.currencies)
+          .map(c => `${c.name} (${c.symbol})`)
+          .join(', ')
+      : 'N/A';
 
+    const tld = countryData.tld?.join(', ') || 'N/A';
+    const timezones = countryData.timezones?.slice(0, 3).join(', ') || 'N/A';
+
+    const latlng = countryData.latlng || [0, 0];
+    const mapUrl = `https://www.google.com/maps?q=${latlng[0]},${latlng[1]}&z=5&output=embed`;
+
+    const code = countryData.cca3 || countryData.cca2 || name;
+
+    return `
+      <div class="modal-overlay" id="modal-overlay">
+        <div class="modal" role="dialog" aria-labelledby="modal-title" aria-modal="true">
+          <button 
+            class="modal-close" 
+            id="modal-close"
+            aria-label="Fechar modal"
+          >
+            ✖
+          </button>
+
+          <div class="modal-header">
+            <img src="${flag}" alt="Bandeira de ${this._escapeHtml(name)}" class="modal-flag">
+            <h2 id="modal-title" class="modal-title">${this._escapeHtml(name)}</h2>
+          </div>
+
+          <div class="modal-content">
+            <div class="modal-info-grid">
+              <div class="info-item">
+                <strong>Capital:</strong>
+                <span>${this._escapeHtml(capital)}</span>
+              </div>
+
+              <div class="info-item">
+                <strong>Região:</strong>
+                <span>${this._escapeHtml(region)}</span>
+              </div>
+
+              <div class="info-item">
+                <strong>Sub-região:</strong>
+                <span>${this._escapeHtml(subregion)}</span>
+              </div>
+
+              <div class="info-item">
+                <strong>População:</strong>
+                <span>${population}</span>
+              </div>
+
+              <div class="info-item">
+                <strong>Área:</strong>
+                <span>${area}</span>
+              </div>
+
+              <div class="info-item">
+                <strong>Idiomas:</strong>
+                <span>${this._escapeHtml(languages)}</span>
+              </div>
+
+              <div class="info-item">
+                <strong>Moedas:</strong>
+                <span>${this._escapeHtml(currencies)}</span>
+              </div>
+
+              <div class="info-item">
+                <strong>Domínio:</strong>
+                <span>${this._escapeHtml(tld)}</span>
+              </div>
+
+              <div class="info-item">
+                <strong>Fusos Horários:</strong>
+                <span>${this._escapeHtml(timezones)}</span>
+              </div>
+
+              <div class="info-item">
+                <strong>Fronteiras:</strong>
+                <span>${this._escapeHtml(borders)}</span>
+              </div>
+            </div>
+
+            <div class="modal-map">
+              <h3>Localização</h3>
+              <iframe 
+                src="${mapUrl}" 
+                width="100%" 
+                height="300" 
+                loading="lazy"
+                title="Mapa de ${this._escapeHtml(name)}"
+                frameborder="0"
+              ></iframe>
+            </div>
+          </div>
+
+          <div class="modal-actions">
+            <button 
+              class="fav-toggle-btn ${isFavorite ? 'is-favorite' : ''}" 
+              id="fav-toggle"
+              data-code="${this._escapeHtml(code)}"
+              aria-label="${isFavorite ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}"
+            >
+              ${isFavorite ? '★ Remover dos favoritos' : '☆ Adicionar aos favoritos'}
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  /**
+   * Escapa HTML para prevenir XSS
+   */
   static _escapeHtml(text) {
     const div = document.createElement('div');
     div.textContent = text || '';
     return div.innerHTML;
-  }
-
-
-  static renderDetailsModal(country, isFavorite) {
-    const name = country.name?.official || country.name?.common;
-    const flag = country.flags?.svg || country.flags?.png;
-    const population = country.population?.toLocaleString('pt-BR') || 'N/A';
-    const area = country.area ? `${country.area.toLocaleString('pt-BR')} km²` : 'N/A';
-    const capital = country.capital?.[0] || 'N/A';
-    const borders = country.borders?.join(', ') || 'Nenhuma';
-    const languages = country.languages ? Object.values(country.languages).join(', ') : 'N/A';
-
-    const currencies = country.currencies
-      ? Object.values(country.currencies).map(c => `${c.name} (${c.symbol})`).join(', ')
-      : 'N/A';
-
-    const tld = country.tld?.join(', ') || 'N/A';
-
-    const latlng = country.latlng || [0, 0];
-    const mapUrl = `https://www.google.com/maps?q=${latlng[0]},${latlng[1]}&z=5&output=embed`;
-
-    return `
-      <div class="modal-overlay" id="modal-overlay" data-code="${country.code}">
-        <div class="modal">
-          <button class="modal-close" id="modal-close">✖</button>
-
-          <h2>${name}</h2>
-          <img src="${flag}" class="modal-flag">
-
-          <p><strong>Capital:</strong> ${capital}</p>
-          <p><strong>Área:</strong> ${area}</p>
-          <p><strong>População:</strong> ${population}</p>
-          <p><strong>Idiomas:</strong> ${languages}</p>
-          <p><strong>Moedas:</strong> ${currencies}</p>
-          <p><strong>Domínios:</strong> ${tld}</p>
-          <p><strong>Fronteiras:</strong> ${borders}</p>
-
-          <h3>Mapa</h3>
-          <iframe src="${mapUrl}" width="100%" height="300" loading="lazy"></iframe>
-
-          <button class="fav-toggle-btn" id="fav-toggle">
-            ${isFavorite ? '★ Remover dos favoritos' : '☆ Adicionar aos favoritos'}
-          </button>
-        </div>
-      </div>
-    `;
   }
 }

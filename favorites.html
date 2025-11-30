@@ -3,40 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Países Favoritos</title>
-
+    <meta name="description" content="Seus países favoritos salvos para consulta rápida.">
+    <title>Países Favoritos - Explorador de Países</title>
     <link rel="stylesheet" href="src/styles/main.css">
 </head>
 <body>
-
-<header class="site-header">
-    <div class="header-container">
-        <a href="index.html" class="logo">
-            <img src="src/assets/images/logotipo.png" width="150">
-        </a>
-
-        <nav class="main-nav">
-            <ul class="nav-list">
-                <li><a href="index.html" class="nav-link">Início</a></li>
-                <li><a href="favorites.html" class="nav-link nav-link--active">Favoritos</a></li>
-            </ul>
-        </nav>
-    </div>
-</header>
-
-<main class="main-content">
-
-    <section class="countries-section">
-        <h2 class="hero-title">Meus Países Favoritos</h2>
-
-        <div id="favorites-list" class="countries-grid">
-            <p>Carregando favoritos...</p>
+    <!-- Header -->
+    <header class="site-header" role="banner">
+        <div class="header-container">
+            <a href="index.html" class="logo" aria-label="Voltar para a página inicial">
+                <img src="src/assets/images/logotipo.png" alt="Logo Explorador de Países" width="150" height="50">
+            </a>
+            
+            <nav class="main-nav" role="navigation" aria-label="Navegação principal">
+                <ul class="nav-list">
+                    <li><a href="index.html" class="nav-link">Início</a></li>
+                    <li><a href="#countries" class="nav-link">Países</a></li>
+                    <li><a href="favorites.html" class="nav-link nav-link--active">Favoritos (<span id="fav-count">0</span>)</a></li>
+                </ul>
+            </nav>
         </div>
-    </section>
+    </header>
 
-</main>
+    <!-- Main Content -->
+    <main class="main-content" role="main">
+        <!-- Hero Section -->
+        <section class="hero-section" aria-labelledby="hero-title">
+            <h1 id="hero-title" class="hero-title">⭐ Meus Países Favoritos</h1>
+            <p class="hero-description">Seus países salvos para consulta rápida</p>
+        </section>
 
-<script type="module" src="src/js/favorites.js"></script>
+        <!-- Actions Section -->
+        <section class="actions-section">
+            <div class="actions-wrapper">
+                <button id="clear-all-btn" class="action-btn danger" aria-label="Remover todos os favoritos">
+                    🗑️ Limpar Todos
+                </button>
+                <button id="export-btn" class="action-btn" aria-label="Exportar favoritos">
+                    📥 Exportar Favoritos
+                </button>
+            </div>
+        </section>
 
+        <!-- Favorites Listing Section -->
+        <section class="countries-section" aria-labelledby="favorites-title">
+            <h2 id="favorites-title" class="visually-hidden">Lista de Favoritos</h2>
+            <div class="countries-wrapper">
+                <div 
+                    id="favorites-list" 
+                    class="countries-grid"
+                    role="region"
+                    aria-live="polite"
+                    aria-label="Lista de países favoritos"
+                >
+                    <div class="loading-state">
+                        <p>Carregando favoritos...</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div id="modal-container"></div>
+
+    <footer class="site-footer" role="contentinfo">
+        <div class="footer-container">
+            <p class="footer-text">&copy; 2024 Explorador de Países. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <script type="module" src="src/js/favorites-page.js"></script>
 </body>
 </html>

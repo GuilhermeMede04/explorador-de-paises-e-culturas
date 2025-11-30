@@ -3,6 +3,7 @@
  */
 
 import { CountryService } from '../services/CountryService.js';
+import { FavoritesService } from '../services/FavoritesService.js';
 import { CountryView } from '../views/CountryView.js';
 import { DOM_SELECTORS, DEBOUNCE_DELAY } from '../config/constants.js';
 import { 
@@ -16,7 +17,9 @@ import { debounce } from '../utils/debounce.js';
 export class AppController {
   constructor() {
     this.countryService = new CountryService();
+    this.favoritesService = new FavoritesService();
     this.elements = {};
+    this.showingFavorites = false;
   }
 
   /**
@@ -25,16 +28,13 @@ export class AppController {
   async init() {
     try {
       console.log('[Controller] Inicializando aplicação...');
-
+      
       this._cacheElements();
       this._validateElements();
       await this._loadCountries();
       this._setupEventListeners();
-      this._setupCountryCardListeners();
-
-      // Permite que outras partes da app acessem o service
-      window.__APP__ = this;
-
+      this._updateFavoriteCount();
+      
       console.log('[Controller] Aplicação inicializada com sucesso ✅');
     } catch (error) {
       console.error('[Controller] Erro ao inicializar:', error);
@@ -42,11 +42,18 @@ export class AppController {
     }
   }
 
+  /**
+   * Armazena referências dos elementos DOM
+   */
   _cacheElements() {
     this.elements = {
       searchInput: selectElement(DOM_SELECTORS.SEARCH_INPUT),
       continentFilter: selectElement(DOM_SELECTORS.CONTINENT_FILTER),
       countriesList: selectElement(DOM_SELECTORS.COUNTRIES_LIST),
+      modalContainer: selectElement('#modal-container'),
+      favCount: selectElement('#fav-count'),
+      showFavoritesBtn: selectElement('#show-favorites-btn'),
+      showAllBtn: selectElement('#show-all-btn'),
     };
   }
 
@@ -68,10 +75,12 @@ export class AppController {
   async _loadCountries() {
     try {
       this._renderLoading();
+      
       const countries = await this.countryService.loadAllCountries();
+      
       this._renderCountries(countries);
-    } catch (err) {
-      this._renderError('Falha ao carregar países. Verifique sua conexão.');
+    } catch (error) {
+      throw error;
     }
   }
 
@@ -86,12 +95,21 @@ export class AppController {
 
     addEventListener(this.elements.searchInput, 'input', debouncedFilter);
     addEventListener(this.elements.continentFilter, 'change', () => this._handleFilter());
+
+    addEventListener(this.elements.showFavoritesBtn, 'click', () => this._showFavorites());
+    addEventListener(this.elements.showAllBtn, 'click', () => this._showAll());
+
+    addEventListener(this.elements.countriesList, 'click', (e) => this._handleCardClick(e));
+
+    addEventListener(this.elements.modalContainer, 'click', (e) => this._handleModalClick(e));
   }
 
   /**
    * Manipula filtros
    */
   _handleFilter() {
+    if (this.showingFavorites) return; 
+
     const searchTerm = getInputValue(this.elements.searchInput);
     const region = getInputValue(this.elements.continentFilter);
 
@@ -103,82 +121,182 @@ export class AppController {
   }
 
   /**
-   * Renderização de UI
+   * Mostra apenas favoritos
+   */
+  _showFavorites() {
+    this.showingFavorites = true;
+    this.elements.showFavoritesBtn.style.display = 'none';
+    this.elements.showAllBtn.style.display = 'inline-block';
+
+    const favorites = this.favoritesService.getFavorites();
+    const favoriteCountries = this.countryService.getFavoriteCountries(favorites);
+
+    console.log('[Controller] Mostrando favoritos:', favoriteCountries.length);
+
+    this._renderCountries(favoriteCountries);
+  }
+
+  /**
+   * Mostra todos os países
+   */
+  _showAll() {
+    this.showingFavorites = false;
+    this.elements.showFavoritesBtn.style.display = 'inline-block';
+    this.elements.showAllBtn.style.display = 'none';
+
+    this._handleFilter();
+  }
+
+  /**
+   * Manipula cliques nos cards
+   */
+  _handleCardClick(e) {
+    const detailsBtn = e.target.closest('[data-details]');
+    const favBtn = e.target.closest('[data-fav]');
+
+    if (detailsBtn) {
+      const code = detailsBtn.dataset.details;
+      this._showDetails(code);
+    } else if (favBtn) {
+      const code = favBtn.dataset.fav;
+      this._toggleFavorite(code, favBtn);
+    }
+  }
+
+  /**
+   * Mostra detalhes do país em modal
+   */
+  async _showDetails(code) {
+    try {
+      console.log('[Controller] Abrindo modal para:', code);
+
+      // Mostra loading no modal
+      setHTML(this.elements.modalContainer, '<div class="modal-overlay"><div class="modal">Carregando...</div></div>');
+
+      const countryData = await this.countryService.getCountryDetails(code);
+      const isFavorite = this.favoritesService.isFavorite(code);
+
+      const modalHTML = CountryView.renderDetailsModal(countryData, isFavorite);
+      setHTML(this.elements.modalContainer, modalHTML);
+
+      // Adiciona classe ao body para prevenir scroll
+      document.body.style.overflow = 'hidden';
+
+    } catch (error) {
+      console.error('[Controller] Erro ao abrir modal:', error);
+      setHTML(this.elements.modalContainer, '');
+    }
+  }
+
+  /**
+   * Fecha modal
+   */
+  _closeModal() {
+    setHTML(this.elements.modalContainer, '');
+    document.body.style.overflow = '';
+  }
+
+  /**
+   * Manipula cliques no modal
+   */
+  _handleModalClick(e) {
+    const closeBtn = e.target.closest('#modal-close');
+    const overlay = e.target.closest('.modal-overlay');
+    const favToggle = e.target.closest('#fav-toggle');
+
+    if (closeBtn || (overlay && e.target === overlay)) {
+      this._closeModal();
+    } else if (favToggle) {
+      const code = favToggle.dataset.code;
+      this._toggleFavoriteInModal(code, favToggle);
+    }
+  }
+
+  /**
+   * Alterna favorito
+   * @private
+   */
+  _toggleFavorite(code, button) {
+    const isFavorite = this.favoritesService.toggleFavorite(code);
+
+    // Atualiza visual do botão
+    if (isFavorite) {
+      button.classList.add('favorite');
+      button.textContent = '★';
+      button.setAttribute('aria-label', 'Remover dos favoritos');
+    } else {
+      button.classList.remove('favorite');
+      button.textContent = '☆';
+      button.setAttribute('aria-label', 'Adicionar aos favoritos');
+    }
+
+    this._updateFavoriteCount();
+
+    // Se está mostrando favoritos e removeu, atualiza a lista
+    if (this.showingFavorites && !isFavorite) {
+      this._showFavorites();
+    }
+  }
+
+  /**
+   * Alterna favorito no modal
+   */
+  _toggleFavoriteInModal(code, button) {
+    const isFavorite = this.favoritesService.toggleFavorite(code);
+
+    // Atualiza visual do botão no modal
+    if (isFavorite) {
+      button.classList.add('is-favorite');
+      button.textContent = '★ Remover dos favoritos';
+    } else {
+      button.classList.remove('is-favorite');
+      button.textContent = '☆ Adicionar aos favoritos';
+    }
+
+    this._updateFavoriteCount();
+
+    // Atualiza o card na lista se estiver visível
+    const card = this.elements.countriesList.querySelector(`[data-country="${code}"]`);
+    if (card) {
+      const cardFavBtn = card.querySelector('[data-fav]');
+      if (cardFavBtn) {
+        this._toggleFavorite(code, cardFavBtn);
+      }
+    }
+  }
+
+  /**
+   * Atualiza contador de favoritos
+   */
+  _updateFavoriteCount() {
+    if (this.elements.favCount) {
+      const count = this.favoritesService.getCount();
+      this.elements.favCount.textContent = count;
+    }
+  }
+
+  /**
+   * Renderiza lista de países
    */
   _renderCountries(countries) {
-    const html = CountryView.renderList(countries);
+    const favorites = this.favoritesService.getFavorites();
+    const html = CountryView.renderList(countries, favorites);
     setHTML(this.elements.countriesList, html);
   }
 
+  /**
+   * Renderiza loading
+   */
   _renderLoading() {
     const html = CountryView.renderLoading();
     setHTML(this.elements.countriesList, html);
   }
 
+  /**
+   * Renderiza erro
+   */
   _renderError(errorMessage) {
     const html = CountryView.renderError(errorMessage);
     setHTML(this.elements.countriesList, html);
-  }
-
-  /**
-   * Eventos de clique nos cards e no modal
-   */
-  _setupCountryCardListeners() {
-    addEventListener(document, 'click', async (e) => {
-
-      // Abrir detalhes
-      if (e.target.matches('[data-details]')) {
-        const code = e.target.dataset.details;
-        await this._openDetailsModal(code);
-      }
-
-      // Favoritar nos cards
-      if (e.target.matches('[data-fav]')) {
-        const code = e.target.dataset.fav;
-
-        const added = this.countryService.toggleFavorite(code);
-        console.log("Novo estado favorito:", added);
-
-        // APLICA a classe .favorite corretamente
-        e.target.classList.toggle('favorite', added);
-      }
-
-      // Fechar modal
-      if (e.target.id === 'modal-overlay' || e.target.id === 'modal-close') {
-        document.querySelector('#modal-overlay')?.remove();
-      }
-
-      // Favoritar pelo botão dentro do modal
-      if (e.target.id === 'fav-toggle') {
-        const overlay = document.querySelector('#modal-overlay');
-        const code = overlay.dataset.code;
-
-        const updated = this.countryService.toggleFavorite(code);
-
-        e.target.textContent = updated
-          ? '★ Remover dos favoritos'
-          : '☆ Adicionar aos favoritos';
-      }
-    });
-  }
-
-  /**
-   * Abre o modal de detalhes
-   */
-  async _openDetailsModal(code) {
-    try {
-      const data = await this.countryService.getCountryByCode(code);
-      const isFav = this.countryService.isFavorite(code);
-
-      const html = CountryView.renderDetailsModal(data, isFav);
-
-      document.body.insertAdjacentHTML('beforeend', html);
-
-      // Define o código dentro do dataset do overlay (para o fav-toggle funcionar)
-      document.querySelector('#modal-overlay').dataset.code = code;
-
-    } catch (error) {
-      alert('Erro ao carregar detalhes do país.');
-    }
   }
 }
