@@ -20,6 +20,7 @@ src/styles/
 └── utilities/                  # Classes auxiliares
     ├── helpers.css            # Utilitários gerais
     └── accessibility.css      # Acessibilidade
+    |__ spinner.css
 ```
 
 ## Metodologia ITCSS

@@ -26,3 +26,7 @@
 /* Utilities - Classes auxiliares */
 @import './utilities/helpers.css';
 @import './utilities/accessibility.css';
+@import './utilities/spinner.css';
+
+/*para pages*/
+@import './pages/about.css'

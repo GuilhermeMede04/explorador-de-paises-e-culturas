@@ -15,12 +15,16 @@ export class CountryService {
    */
   async loadAllCountries() {
     try {
+      appSpinner.show();
       this.countries = await this.repository.fetchAll();
       console.log(`[Service] ${this.countries.length} países carregados com sucesso`);
       return this.countries;
     } catch (error) {
       console.error('[Service] Erro ao carregar países:', error);
       throw error;
+    }
+    finally{
+      appSpinner.hide();
     }
   }
 
@@ -57,10 +61,14 @@ export class CountryService {
   async getCountryDetails(code) {
     try {
       console.log('[Service] Buscando detalhes do país:', code);
+      appSpinner.show();
       return await this.repository.fetchByCode(code);
     } catch (error) {
       console.error('[Service] Erro ao buscar detalhes:', error);
       throw error;
+    }
+    finally{
+      appSpinner.hide()
     }
   }
 

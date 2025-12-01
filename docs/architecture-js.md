@@ -32,6 +32,7 @@ explorador-de-paises/
         └── utils/
             ├── domUtils.js                      # Utilitários DOM
             └── debounce.js                      # Performance
+            |__ spinner.js                       # Spinner para Requisições
 ```
 
 ## 🔄 Fluxo de Dados

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>sobre - explorador de paises</title>
+    <link rel="stylesheet" href="src/styles/main.css">
+</head>
+<body>
+    <!-- header -->
+    <header class="site-header" role="banner">
+        <div class="header-container">
+            <a href="index.html" class="logo" aria-label="voltar para a pagina inicial">
+                <img src="src/assets/images/logotipo.png" alt="logo explorador de paises" width="150" height="50">
+            </a>
+            
+            <nav class="main-nav" role="navigation" aria-label="navegacao principal">
+                <ul class="nav-list">
+                    <li><a href="index.html" class="nav-link">Início</a></li>
+                    <li><a href="#countries" class="nav-link">Países</a></li>
+                    <li><a href="favorites.html" class="nav-link">Favoritos (<span id="fav-count">0</span>)</a></li>
+                    <li><a href="about.html" class="nav-link nav-link--active">Sobre</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- main content -->
+    <main class="main-content" role="main">
+        <div class="project-hero">
+    <h1>Explorador de Países</h1>
+    <p class="hero-subtitle">Uma jornada pelo mundo através da tecnologia</p>
+    
+    <div class="project-card">
+        <div class="card-icon">🌍</div>
+        <h2>Sobre o Projeto</h2>
+        <p>Aplicativo web desenvolvido para explorar informações culturais, geográficas e políticas de países utilizando a REST Countries API.</p>
+    </div>
+</div>
+        <!-- team section -->
+        <section class="about-section">
+            <div class="container">
+                <div class="team-section">
+                    <h2>Nossa Equipe</h2>
+                    <div class="team-grid-photos">
+                        <!-- membro 1 -->
+                        <div class="team-member-photo">
+                            <div class="member-image">
+                                <img src="./src/assets/images/member1.jpg" alt="seu nome" onerror="this.src='https://via.placeholder.com/150/3498db/ffffff?text=SEU+NOME'">
+                            </div>
+                            <h3>Guilherme</h3>
+                            <p class="member-function">Desenvolvedor front-end</p>
+                            <div class="member-tasks">
+                                <p>Buscas, Filtros e Listagem</p>
+                            </div>
+                        </div>
+
+                        <!-- membro 2 -->
+                        <div class="team-member-photo">
+                            <div class="member-image">
+                                <img src="./src/assets/images/member2.jpg" alt="nome do colega 1" onerror="this.src='https://via.placeholder.com/150/e74c3c/ffffff?text=COLEGA+1'">
+                            </div>
+                            <h3>Rian Kaio</h3>
+                            <p class="member-function">Desenvolvedor front-end</p>
+                            <div class="member-tasks">
+                                <p>Otimização e organização do código</p>
+                            </div>
+                        </div>
+
+                        <!-- membro 3 -->
+                        <div class="team-member-photo">
+                            <div class="member-image">
+                                <img src="./src/assets/images/member3.jpg" alt="nome do colega 2" onerror="this.src='https://via.placeholder.com/150/27ae60/ffffff?text=COLEGA+2'">
+                            </div>
+                            <h3>Lucas</h3>
+                            <p class="member-function">Desenvolvedor front-end</p>
+                            <div class="member-tasks">
+                                <p>Detalhes, Favoritos e Tratamento de Erros</p>
+                            </div>
+                        </div>
+
+                        <!-- membro 4 -->
+                        <div class="team-member-photo">
+                            <div class="member-image">
+                                <img src="./src/assets/images/member4.png" alt="nome do colega 3" onerror="this.src='https://via.placeholder.com/150/f39c12/ffffff?text=COLEGA+3'">
+                            </div>
+                            <h3>Filipe</h3>
+                            <p class="member-function">Desenvolvedor front-end</p>
+                            <div class="member-tasks">
+                                <p>Spinner, Página Sobre e Rodapé</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- footer -->
+    <footer class="site-footer" role="contentinfo">
+        <div class="footer-container">
+        <div class="footer-members">
+            <p><strong>Equipe:</strong> Guilherme, Rian Kaio, Lucas, Filipe</p>
+        </div>
+        <p class="footer-text">&copy; 2024 Explorador de Países</p>
+    </div>
+    </footer>
+
+    <!-- serve para atualizar o contador de favoritos -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const favorites = JSON.parse(localStorage.getItem('favorite_countries') || '[]');
+            const favCount = document.getElementById('fav-count');
+            if (favCount) {
+                favCount.textContent = favorites.length;
+            }
+        });
+    </script
+</body>
+</html>

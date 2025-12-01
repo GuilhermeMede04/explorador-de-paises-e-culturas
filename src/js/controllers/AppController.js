@@ -75,12 +75,14 @@ export class AppController {
   async _loadCountries() {
     try {
       this._renderLoading();
-      
+      appSpinner.show();
       const countries = await this.countryService.loadAllCountries();
-      
       this._renderCountries(countries);
     } catch (error) {
       throw error;
+    }
+    finally{
+      appSpinner.hide();
     }
   }
 
@@ -244,7 +246,7 @@ export class AppController {
   _toggleFavoriteInModal(code, button) {
     const isFavorite = this.favoritesService.toggleFavorite(code);
 
-    // Atualiza visual do botão no modal
+    // Atualiza visual do botao no modal
     if (isFavorite) {
       button.classList.add('is-favorite');
       button.textContent = '★ Remover dos favoritos';
@@ -255,15 +257,24 @@ export class AppController {
 
     this._updateFavoriteCount();
 
-    // Atualiza o card na lista se estiver visível
-    const card = this.elements.countriesList.querySelector(`[data-country="${code}"]`);
+    // Atualiza o card na lista se estiver visivel
+    const card = this.elements.countriesList?.querySelector(`[data-country="${code}"]`);
     if (card) {
       const cardFavBtn = card.querySelector('[data-fav]');
       if (cardFavBtn) {
-        this._toggleFavorite(code, cardFavBtn);
+        if (isFavorite) {
+          cardFavBtn.classList.add('favorite');
+          cardFavBtn.textContent = '★';
+          cardFavBtn.setAttribute('aria-label', 'Remover dos favoritos');
+        } else {
+          cardFavBtn.classList.remove('favorite');
+          cardFavBtn.textContent = '☆';
+          cardFavBtn.setAttribute('aria-label', 'Adicionar aos favoritos');
+        }
       }
     }
   }
+
 
   /**
    * Atualiza contador de favoritos

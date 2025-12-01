@@ -46,6 +46,7 @@ explorador-de-paises/
     │   └── utilities/
     │       ├── helpers.css
     │       └── accessibility.css
+    |       |__ spinner.css
     │
     └── js/
         ├── main.js
@@ -75,6 +76,7 @@ explorador-de-paises/
         └── utils/
             ├── domUtils.js
             └── debounce.js
+            |__ spinner.js               
 ```
 
 ---
@@ -99,6 +101,7 @@ explorador-de-paises/
 - [ ] `src/js/views/FavoritesView.js` (NOVO)
 - [ ] `src/js/utils/domUtils.js`
 - [ ] `src/js/utils/debounce.js`
+- [ ] `src/js/utils/spinner.js`
 
 ### CSS (16 arquivos - +1 novo)
 - [ ] `src/styles/main.css` (ATUALIZADO)
@@ -118,6 +121,7 @@ explorador-de-paises/
 - [ ] `src/styles/components/favorites-page.css` (NOVO)
 - [ ] `src/styles/utilities/helpers.css`
 - [ ] `src/styles/utilities/accessibility.css`
+- [ ] `src/styles/utilities/spinner.css`
 
 ---
 
