@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +8,7 @@
     <title>Explorador de Países e Culturas</title>
     <link rel="stylesheet" href="src/styles/main.css">
 </head>
+
 <body>
     <!-- Header -->
     <header class="site-header" role="banner">
@@ -14,11 +16,10 @@
             <a href="index.html" class="logo" aria-label="Voltar para a página inicial">
                 <img src="src/assets/images/logotipo.png" alt="Logo Explorador de Países" width="150" height="50">
             </a>
-            
+
             <nav class="main-nav" role="navigation" aria-label="Navegação principal">
                 <ul class="nav-list">
                     <li><a href="index.html" class="nav-link nav-link--active">Início</a></li>
-                    <li><a href="#countries" class="nav-link">Países</a></li>
                     <li><a href="favorites.html" class="nav-link">Favoritos (<span id="fav-count">0</span>)</a></li>
                     <li><a href="about.html" class="nav-link">Sobre</a></li>
                 </ul>
@@ -39,14 +40,7 @@
             <h2 id="search-title" class="visually-hidden">Buscar País</h2>
             <div class="search-wrapper">
                 <label for="country-search" class="visually-hidden">Digite o nome do país</label>
-                <input 
-                    type="search" 
-                    id="country-search" 
-                    class="search-input" 
-                    placeholder="Buscar país por nome..."
-                    aria-label="Buscar país por nome"
-                    autocomplete="off"
-                >
+                <input type="search" id="country-search" class="search-input" placeholder="Buscar país por nome..." aria-label="Buscar país por nome" autocomplete="off">
             </div>
         </section>
 
@@ -55,11 +49,7 @@
             <h2 id="filter-title" class="visually-hidden">Filtrar Países</h2>
             <div class="filter-wrapper">
                 <label for="continent-filter" class="filter-label">Filtrar por continente:</label>
-                <select 
-                    id="continent-filter" 
-                    class="filter-select" 
-                    aria-label="Selecione um continente"
-                >
+                <select id="continent-filter" class="filter-select" aria-label="Selecione um continente">
                     <option value="">Todos os continentes</option>
                     <option value="Africa">África</option>
                     <option value="Americas">América</option>
@@ -82,13 +72,7 @@
         <section class="countries-section" aria-labelledby="countries-title">
             <h2 id="countries-title" class="visually-hidden">Lista de Países</h2>
             <div class="countries-wrapper">
-                <div 
-                    id="countries-list" 
-                    class="countries-grid"
-                    role="region"
-                    aria-live="polite"
-                    aria-label="Resultados da busca de países"
-                >
+                <div id="countries-list" class="countries-grid" role="region" aria-live="polite" aria-label="Resultados da busca de países">
                     <div class="loading-state">
                         <p>Carregando países...</p>
                     </div>
@@ -101,15 +85,16 @@
 
     <footer class="site-footer" role="contentinfo">
         <div class="footer-container">
-        <div class="footer-members">
-            <p><strong>Equipe:</strong> Guilherme, Rian Kaio, Lucas, Filipe</p>
+            <div class="footer-members">
+                <p><strong>Equipe:</strong> Guilherme, Rian Kaio, Lucas, Filipe</p>
+            </div>
+            <p class="footer-text">&copy; Projeto acadêmico | Programação Web | 2024.2</p>
         </div>
-        <p class="footer-text">&copy; 2024 Explorador de Países</p>
-    </div>
     </footer>
 
     <!-- Scripts -->
     <script type="module" src="src/js/main.js"></script>
     <script src="src/js/utils/spinner.js"></script>
 </body>
+
 </html>
